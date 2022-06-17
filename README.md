@@ -1,2 +1,8 @@
 # 2022_1_CapstoneDesign
-2022년 1학기 캡스톤디자인 프로젝트 파일입니다.
+
+## 1. 개요
+
+## 2. 활용 알고리즘 및 기술
+### 2-1. Harris 3D
+### 2-2. Procedural Animation
+
