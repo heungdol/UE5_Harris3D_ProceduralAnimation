@@ -6,6 +6,7 @@
 ## 1. 개요
 ### 1-1. 배경
 ![unnamed (1)](https://user-images.githubusercontent.com/30585313/174286521-bcb7c424-cd11-41bf-af16-67b6b92aa503.gif)
+<img src="이미지주소.png" width="200" height="400"/>
 <br>
 최근 나오는 게임들을 보면 캐릭터들의 움직임이 되게 입체적인 것을 확인할 수 있다. XY 평면으로만 이동하지 않고 높이 Z축으로도 이동한다는 점이다. 그렇기에 자연스럽게 벽과 상호작용하는 액션(벽타기, 오르기... 등)의 애니메이션이 필요하게 된다. 이 때 벽화 상호작용하는 액션 중 암벽등반이라는 구체적인 상황을 설정함으로써, 이의 자연스러운 애니메이션을 연출하기 위해 프로젝트를 진행하게 되었다.
 
@@ -47,30 +48,40 @@ Quixel Bridge에서 제공하는 3D 스캔 데이터이다.
 
 ### 3-1. Harris 3D Keypoint 검출
 #### 3-1-1. 자연물
-- SHARP CLIFF <BR>
+- SHARP CLIFF (Vertex Ring Number = 3 / Harris Number = 0.2) <BR>
 ![Honeycam 2022-06-17 19-47-52](https://user-images.githubusercontent.com/30585313/174285707-10dadd65-6ba1-421e-900c-59a68b56538a.gif)
-- FOREST ROCK WALL <BR>
+- FOREST ROCK WALL (Vertex Ring Number = 3 / Harris Number = 0.1) <BR>
 ![Honeycam 2022-06-17 19-47-39](https://user-images.githubusercontent.com/30585313/174285703-e760e6de-d994-48cf-9dc1-197b7f86b542.gif)
-- ROCKY CLIFF <BR>
+- ROCKY CLIFF (Vertex Ring Number = 3 / Harris Number = 0.2) <BR>
 ![Honeycam 2022-06-17 19-47-22](https://user-images.githubusercontent.com/30585313/174285695-3a5090fb-6707-4502-a4f6-a276f8b37e3f.gif)
     
 #### 3-1-2. 인공물
-- ROMAN STATUE <BR>
+- ROMAN STATUE (Vertex Ring Number = 3 / Harris Number = 0.05) <BR>
 ![Honeycam 2022-06-17 19-48-25](https://user-images.githubusercontent.com/30585313/174285710-7c1c95c7-4887-4328-9ea4-99f54c13fe36.gif)  
-- ROMAN GRAVE STONE <BR>
+- ROMAN GRAVE STONE (Vertex Ring Number = 3 / Harris Number = 0.245) <BR>
 ![Honeycam 2022-06-17 19-48-57](https://user-images.githubusercontent.com/30585313/174285713-e44eea65-6692-4d9d-a1da-b342728d0218.gif)
-- ROMAN MARBLE ORNATE PLINTH <BR>
+- ROMAN MARBLE ORNATE PLINTH (Vertex Ring Number = 3 / Harris Number = 0.2) <BR>
 ![Honeycam 2022-06-17 19-49-21](https://user-images.githubusercontent.com/30585313/174285716-64662df2-17d4-4cfb-8833-6ed764e543e6.gif) 
-- ROMAN RED BRICK COLUMN <BR>
+- ROMAN RED BRICK COLUMN (Vertex Ring Number = 3 / Harris Number = 0.2) <BR>
 ![Honeycam 2022-06-17 19-49-37](https://user-images.githubusercontent.com/30585313/174285719-57a778e5-4a13-44ca-838b-27dd1846ac6a.gif)
     
 ### 3-2. Procedural Animation
 #### 3-2-1. Third Person Character <br>
-![화면 캡처 2022-06-17 195424](https://user-images.githubusercontent.com/30585313/174285821-16b3f77e-a561-4810-bb23-620719eb1614.png)
+![화면 캡처 2022-06-17 195424](https://user-images.githubusercontent.com/30585313/174285821-16b3f77e-a561-4810-bb23-620719eb1614.png) <br>
+    - 메인 캐릭터 Actor
+    - 4개의 IK Effector와 Pelvis Actor Component를 가짐
+    - 위의 5개 Actor Component를 관할하는 형식
+    - 각각의 이동 조건판단 및 Keypoint Location / Normal을 받아 실질적인 이동 계산
+    
 #### 3-2-2. IK Effector <br>
 ![화면 캡처 2022-06-17 195352](https://user-images.githubusercontent.com/30585313/174285832-6dfb88d7-e064-4889-beb0-dd14b2cdc3d2.png)
+    - Hands와 Foots를 관리하는 Actor Component
+    - Keypoint의 Normal를 내적시켜 잡거나 딛을 수 있는 Keypoint인지 판단
+    
 #### 3-2-3. Pelvis Transform <br>
 ![화면 캡처 2022-06-17 195046](https://user-images.githubusercontent.com/30585313/174285827-71be86e9-819d-4146-bcd7-533e5438efe1.png)
+    - Pelvis의 Transform을 관리하는 Actor Component
+    - 이동할 수 있는 구역 판단
  
 ### 3-3. 암벽등반 애니메이션 구현
 #### 3-3-1. 자연물
@@ -85,6 +96,9 @@ Quixel Bridge에서 제공하는 3D 스캔 데이터이다.
 ![Honeycam 2022-06-17 19-42-34](https://user-images.githubusercontent.com/30585313/174285421-8951beb0-2e42-4a9d-86e8-7d7609edc464.gif) <br>
 ![Honeycam 2022-06-17 19-43-03](https://user-images.githubusercontent.com/30585313/174285426-909bffe4-ad10-4e27-959b-f4cf079182c4.gif) <br>
 
+<br>
+특징과 특징이 아닌 구역이 잘 구분되는 인공물 메쉬가 비교적 Keypoint 검출하는 데에 자연스러워 보인다. <br>
+그러한 이유로 타당한 Vertex를 잡거나 딛는 움직임을 보인다. <br>
     
 ## 4. 피드백 및 추가 구현 사항 (소융캡디 최종 발표)
     - 피드백: 검출시 Keypoint들이 가까이 겹쳐져 있는 부분 수정요함
@@ -104,9 +118,7 @@ Quixel Bridge에서 제공하는 3D 스캔 데이터이다.
     - 기타: Harris 3D 뿐만 아니라 다른 Keypoint 검출하는 알고리즘을 조사해볼 것
     
 ## 5. 피드백 수용 및 개선
+추후 진행할 예정
 
 ## 6. 2차 구현 및 결과
-
-## 7. 
-
-## 8. 마무리
+추후 진행할 예정
