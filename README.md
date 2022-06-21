@@ -120,6 +120,7 @@ Quixel Bridge에서 제공하는 3D 스캔 데이터이다.
     
 ## 4. 피드백 및 추가 구현 사항 (소융캡디 최종 발표)
     - 피드백: 검출시 Keypoint들이 가까이 겹쳐져 있는 부분 수정요함
+        - 활용할 수 있는 알고리즘으로썬 NMS
     - 피드백: 자연물을 보면 Keypoint들이 제대로 검출되지 않았다고 했는데, 두 개의 임계치를 수정해서 테스트해볼 것
         - Window Size -> Vertex Ring Number
         - Harris Operator -> Fraction of the Diagonal
