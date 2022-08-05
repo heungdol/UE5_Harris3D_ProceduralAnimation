@@ -1,4 +1,4 @@
-# Harris 3D과 Procedural Animation을 활용한 등산모션 제작
+# Harris 3D를 활용한 Procedural Climbing Animation 제작
 <img src = "https://user-images.githubusercontent.com/30585313/174286112-9d2da32b-fa5a-43d5-9a42-48f127dd3e89.gif" width="50%" height="50%">
 <br>
 2022년 1학기 소프트웨어융합캡스톤디자인 프로젝트
@@ -118,26 +118,15 @@ Quixel Bridge에서 제공하는 3D 스캔 데이터이다.
 특징과 특징이 아닌 구역이 잘 구분되는 인공물 메쉬가 비교적 Keypoint 검출하는 데에 자연스러워 보인다. <br>
 그러한 이유로 타당한 Vertex를 잡거나 딛는 움직임을 보인다. <br>
     
-## 4. 피드백 및 추가 구현 사항 (소융캡디 최종 발표)
-    - 피드백: 검출시 Keypoint들이 가까이 겹쳐져 있는 부분 수정요함
+## 4. 소융캡디 최종 발표 후 피드백
+    - 검출시 Keypoint들이 가까이 겹쳐져 있는 부분 수정요함
         - 활용할 수 있는 알고리즘으로썬 NMS
-    - 피드백: 자연물을 보면 Keypoint들이 제대로 검출되지 않았다고 했는데, 두 개의 임계치를 수정해서 테스트해볼 것
+        
+    - 자연물을 보면 Keypoint들이 제대로 검출되지 않았다고 했는데, 두 개의 임계치를 수정해서 테스트해볼 것
         - Window Size -> Vertex Ring Number
         - Harris Operator -> Fraction of the Diagonal
-    - 피드백: 발표를 할때 IK에 대해 좀 더 이야기 했으면 좋았을 것
-    
-    - 기타: 캐릭터 컨트롤러 조작감 수정 및  Locomotion 추가
-    - 기타: 손과 발의 각도 수정
-    - 기타: Github 페이지 수정하기
-    - 기타: 발표 때 Keypoint 이야기할 때 Wireframe mode로 설명했으면 더 좋았을 것
-    - 기타: 발표 때 파이프라인을 들어 설명했으면 좋았을 것
-    - 기타: 정상에 다다를시 올라갈 수 있도록 캐릭터 컨트롤러 수정
-    - 기타: 인터페이스가 잘 되어 있는 UE5로 업그레이드 하기
-        - UE5에서도 C++ 빌드할 수 있도록 환경 구성할 것
-    - 기타: Harris 3D 뿐만 아니라 다른 Keypoint 검출하는 알고리즘을 조사해볼 것
-    
-## 5. 피드백 수용 및 개선
-추후 진행할 예정
 
-## 6. 2차 구현 및 결과
-추후 진행할 예정
+    - 캐릭터 컨트롤러 조작감 수정 및  Locomotion 추가
+
+    - Control Rig 인터페이스가 잘 되어 있는 UE5로 업그레이드 하기
+        - UE5에서도 C++ 빌드할 수 있도록 환경 구성할 것
