@@ -1,4 +1,6 @@
 # Harris 3D를 활용한 Procedural Climbing Animation 제작
+[![Video Label](http://img.youtube.com/vi/nzkUXphWkTE/0.jpg)](https://youtu.be/nzkUXphWkTE)
+<br>
 <img src = "https://user-images.githubusercontent.com/30585313/174286112-9d2da32b-fa5a-43d5-9a42-48f127dd3e89.gif" width="50%" height="50%">
 <br>
 2022년 1학기 소프트웨어융합캡스톤디자인 프로젝트
