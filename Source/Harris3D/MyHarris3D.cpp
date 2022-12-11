@@ -20,7 +20,7 @@ using namespace ECollisionEnabled ;
 
 //calculate the neighbourhood at ring 1,
 //currently not being used
-set<int> AMyHarris3D::calculateNeighbourhood(int indexVertex, vector<face> fc)
+/*set<int> AMyHarris3D::calculateNeighbourhood(int indexVertex, vector<face> fc)
 {
 	set<int> neighbour;
 	unsigned int fcSize = fc.size(); //getting the size of the face
@@ -316,7 +316,7 @@ void AMyHarris3D::calculateHarrisResponse()
 		    selectedVertices.push_back(preselected[ss]);
 		    //GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("OH: " + FString::FromInt(preselected[ss])));
 		    //test++;
-		}*/
+		}#1#
 
 		selectedVrts = selectedVertices;
 	}
@@ -395,9 +395,17 @@ AMyHarris3D::AMyHarris3D()
 	/*if (m_pMeshCom.Succeeded())
 	{
 		m_pMeshCom->SetStaticMesh(m_pMeshCom.Object);
-	}*/
+	}#1#
 
 	RootComponent = m_pMeshCom;
+}*/
+
+AMyHarris3D::AMyHarris3D()
+{
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+
+	m_pMeshCom = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MESH"));
 }
 
 // Called when the game starts or when spawned
@@ -405,46 +413,42 @@ void AMyHarris3D::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// 메쉬 할당
-	if (!m_pMeshCom)
-		return;
-
-	myMesh = mesh(m_pMeshCom);
-
-	// 콜리젼 끄기
-	//SetActorEnableCollision(false);
-	m_pMeshCom->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-
-	InitMyHarris3D();
-	calculateHarrisResponse();
-
-	// 선택된 점 위치 확인
-	for (int i = 0; i < selectedVrts.size(); i++)
-	{
-		selectedVrtLocs.Push(myMesh.GetVertexLocByIndex(selectedVrts[i]));
-		currentSelectedVrtLocs.Push(myMesh.GetVertexLocByIndex(selectedVrts[i]));
-		
-		selectedVrtNors.Push (myMesh.GetVertexNorByIndex (selectedVrts[i]));
-		currentSelectedVrtNors.Push (myMesh.GetVertexNorByIndex (selectedVrts[i]));
-	}
-
-	for (int i = 0; i < selectedVrts_clustering.size(); i++)
-	{
-		selectedVrtLocs_clustering.Push(myMesh.GetVertexLocByIndex(selectedVrts_clustering[i]));
-		currentSelectedVrtLocs_clustering.Push(myMesh.GetVertexLocByIndex(selectedVrts_clustering[i]));
-
-		selectedVrtNors_clustering.Push (myMesh.GetVertexNorByIndex (selectedVrts_clustering[i]));
-		currentSelectedVrtNors_clustering.Push (myMesh.GetVertexNorByIndex (selectedVrts_clustering[i]));
-	}
-
-
-	UpdateSelectedVertexLocation();
+	UpdateSelectedVertexLocation ();
 }
 
 // Called every frame
 void AMyHarris3D::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AMyHarris3D::InitSelectedVertexLocation()
+{
+	actorLocation = GetActorLocation();
+	actorScale = GetActorScale();
+	actorRotation = GetActorRotation();
+	
+	// 선택된 점 위치 확인
+	for (int i = 0; i < vrts_postSelected.Num(); i++)
+	{
+		vrtLocs_postSelected.Push(meshData.GetVertexLocByIndex(vrts_postSelected[i]));
+		currentSelectedVrtLocs.Push(meshData.GetVertexLocByIndex(vrts_postSelected[i]));
+		
+		vrtNors_postSelected.Push (meshData.GetVertexNorByIndex (vrts_postSelected[i]));
+		currentSelectedVrtNors.Push (meshData.GetVertexNorByIndex (vrts_postSelected[i]));
+	}
+
+	for (int i = 0; i < vrtLocs_postSelected.Num(); i++)
+	{
+		//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, TEXT("OHa"));
+
+		FVector offset = vrtLocs_postSelected[i];
+		offset *= actorScale;
+		offset = actorRotation.RotateVector(offset);
+		
+		currentSelectedVrtLocs [i] = actorLocation + offset;
+		currentSelectedVrtNors [i] = actorRotation.RotateVector(vrtNors_postSelected [i]);
+	}
 }
 
 void AMyHarris3D::UpdateSelectedVertexLocation()
@@ -458,40 +462,127 @@ void AMyHarris3D::UpdateSelectedVertexLocation()
 		actorScale = GetActorScale();
 		actorRotation = GetActorRotation();
 
-		for (int i = 0; i < selectedVrtLocs.Num(); i++)
+		for (int i = 0; i < vrtLocs_postSelected.Num(); i++)
 		{
 			//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, TEXT("OHa"));
 
-			FVector offset = selectedVrtLocs[i];
+			FVector offset = vrtLocs_postSelected[i];
 			offset *= actorScale;
 			offset = actorRotation.RotateVector(offset);
 			
 			currentSelectedVrtLocs [i] = actorLocation + offset;
-			currentSelectedVrtNors [i] = actorRotation.RotateVector(selectedVrtNors [i]);
+			currentSelectedVrtNors [i] = actorRotation.RotateVector(vrtNors_postSelected [i]);
 
 			if (m_debugDraw == true)
 			//DrawDebugSphere(GetWorld(), currentSelectedVrtLocs [i], m_radius, 8, FColorList::Red, false, .1f, 0, 01);
 			DrawDebugLine(GetWorld()
 				, currentSelectedVrtLocs[i], currentSelectedVrtLocs[i]+4*currentSelectedVrtNors[i]
-				, FColorList::Red, false, 0.1, 0, 1);
+				, m_debugColor, false, 0.1, 0, 5);
 		}
-
-		/*for (int i = 0; i < selectedVrtLocs_clustering.Num(); i++)
-		{
-			//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Yellow, TEXT("OHa"));
-
-			FVector offset = selectedVrtLocs_clustering[i];
-			offset *= actorScale;
-			offset = actorRotation.RotateVector(offset);
-
-			currentSelectedVrtLocs_clustering [i] = actorLocation + offset;
-			currentSelectedVrtNors_clustering [i] = actorRotation.RotateVector(selectedVrtNors_clustering [i]);
 		
-
-			//if (m_debugDraw == true)
-			//DrawDebugSphere(GetWorld(),  currentSelectedVrtLocs_clustering [i], m_radius, 8, FColorList::Blue, false, .1f, 0, 01);
-		}*/
-
 		GetWorld()->GetTimerManager().ClearTimer(WaitHandle);
 	}), WaitTime, true); //반복도 여기서 추가 변수를 선언해 설정가능
+}
+
+void AMyHarris3D::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
+	// 첫 실행 혹은 에디터에서 갱신 bool를 활성화할 시
+	if (m_update_first == false || m_update_click == true)
+	{
+		m_update_first = true;
+		m_update_click = false;
+		
+		// 메쉬 판단
+		if (!m_pMeshCom)
+			return;
+
+		// 분석
+		meshData.Clear();
+		if (MyUtil::ReadMeshWithoutOverwrap(m_pMeshCom, meshData))
+		{
+			m_vertexNumber = meshData.GetTotalVertexNumber();
+			m_surfaceArea = meshData.GetArea();
+			m_vertexRatioByArea = (m_surfaceArea != 0) ? (m_vertexNumber * 1.0 / m_surfaceArea) : 0;
+
+			m_vertexNumber_valid = meshData.GetTotalVertexNumber_Valid();
+			m_surfaceArea_valid = meshData.GetArea_Valid();
+			m_vertexRatioByArea_valid = (m_surfaceArea_valid != 0) ? (m_vertexNumber_valid * 1.0 / m_surfaceArea_valid) : 0;
+			
+			m_boundingBoxSize = meshData.GetBoundingBoxSize();
+			m_boundingBoxCoord_min = meshData.GetBoundingBoxCoord_Min();
+			m_boundingBoxCoord_max = meshData.GetBoundingBoxCoord_Max();
+			
+			m_boundingBoxCoord_pivot = m_boundingBoxCoord_max + m_boundingBoxCoord_min;
+			m_boundingBoxCoord_pivot /= 2.0;
+			
+			m_meshHeight = m_boundingBoxSize.Z;
+			// m_meshObjectNumber = m_pMeshCom->section;
+		}
+
+		// 메쉬 초기화
+		if (keypointDetectionBundle.InitMesh(m_pMeshCom, &meshData) == false)
+			return;
+
+		// 콜리젼 설정
+		m_pMeshCom->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+		vrts_selected.clear();
+		std::vector<int>{}.swap(vrts_selected);
+		
+		vrts_postSelected.Empty();
+		vrtLocs_postSelected.Empty();
+		vrtNors_postSelected.Empty();
+		currentSelectedVrtLocs.Empty();
+		currentSelectedVrtNors.Empty();
+		vrtTypes_postSelected.Empty();
+
+		switch (m_detectorType)
+		{
+		case EDetectorType::NONE:
+			return;
+			
+		case EDetectorType::DT_HR:
+			keypointDetectionBundle.SetParameters_Harris (m_ringSize, m_fraction, m_k);
+			keypointDetectionBundle.InitKeypoints_Harris(vrts_selected);//, vrts_postSelected, vrtLocs_postSelected, vrtNors_postSelected
+			//, vrtTypes_postSelected, vrtNorTypes_postSelected);
+			break;
+		case EDetectorType::DT_HKS:
+			keypointDetectionBundle.SetParameters_HKS (m_t, m_depth);
+			keypointDetectionBundle.InitKeypoints_HKS(vrts_selected);//, vrts_postSelected, vrtLocs_postSelected, vrtNors_postSelected
+			//, vrtTypes_postSelected, vrtNorTypes_postSelected);
+			break;
+		case EDetectorType::DT_ISS:
+			keypointDetectionBundle.SetParameters_ISS (m_saliencyRaidus, m_maxRadius, m_gamma_21, m_gamma_32, m_minNeighbors);
+			keypointDetectionBundle.InitKeypoints_ISS(vrts_selected);//, vrts_postSelected, vrtLocs_postSelected, vrtNors_postSelected
+			//, vrtTypes_postSelected, vrtNorTypes_postSelected);
+			break;
+		case EDetectorType::DT_MS:
+			keypointDetectionBundle.SetParameters_MeshSaliency(m_cutoffSaliency);
+			keypointDetectionBundle.InitKeypoints_MeshSaliency(vrts_selected);//, vrts_postSelected, vrtLocs_postSelected, vrtNors_postSelected
+			//, vrtTypes_postSelected, vrtNorTypes_postSelected);
+			break;
+		}
+
+		// 각도에 따른 필터링
+		for (int i = 0; i < vrts_selected.size(); i++)
+		{
+			FVector nor = meshData.GetVertexNorByIndex(vrts_selected[i]);
+
+			if (MyUtil::IsValidVertexByNormal(nor))
+			{
+				if (vrts_postSelected.Contains(vrts_selected[i]) == false)
+					vrts_postSelected.Push(vrts_selected[i]);
+			}
+				
+		}
+		
+		m_pointNumber = vrts_postSelected.Num();
+		m_pointRatio = m_pointNumber * 1.0 / m_vertexNumber;
+		m_pointRatio_valid = m_pointNumber * 1.0 / m_vertexNumber_valid;
+
+		InitSelectedVertexLocation ();
+		UpdateSelectedVertexLocation();
+	}
 }
